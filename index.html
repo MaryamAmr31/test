@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ahmed Gamal — Portfolio</title>
+  <title>Ahmed Gamal — Full-Stack Developer</title>
   <style>
     :root {
       --bg: #ffffff;
@@ -38,9 +38,20 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
       transition: background 0.3s, color 0.3s;
+      overflow-x: hidden;
     }
     a { color: inherit; text-decoration: none; }
     .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+
+    /* Animated gradient backdrop blobs */
+    .blob {
+      position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.35;
+      z-index: -1; pointer-events: none;
+    }
+    .blob-1 { width: 480px; height: 480px; background: var(--accent); top: -160px; left: -120px; animation: float1 18s ease-in-out infinite; }
+    .blob-2 { width: 420px; height: 420px; background: var(--accent-2); top: 30%; right: -140px; animation: float2 22s ease-in-out infinite; }
+    @keyframes float1 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(60px,40px) scale(1.1);} }
+    @keyframes float2 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(-50px,-30px) scale(1.15);} }
 
     /* Nav */
     header {
@@ -53,8 +64,13 @@
     .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
     .logo span { color: var(--accent); }
     .nav-links { display: flex; gap: 28px; }
-    .nav-links a { color: var(--muted); font-size: 0.95rem; transition: color 0.2s; }
+    .nav-links a { color: var(--muted); font-size: 0.95rem; transition: color 0.2s; position: relative; }
+    .nav-links a::after {
+      content: ""; position: absolute; left: 0; bottom: -4px; width: 0; height: 2px;
+      background: var(--accent); transition: width 0.25s ease;
+    }
     .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover::after { width: 100%; }
     @media (max-width: 680px) { .nav-links { display: none; } }
     .nav-right { display: flex; align-items: center; gap: 20px; }
     .theme-toggle {
@@ -62,12 +78,28 @@
       width: 38px; height: 38px; border-radius: 10px;
       background: var(--surface-2); border: 1px solid var(--border);
       color: var(--text); cursor: pointer; font-size: 1.1rem; line-height: 1;
-      transition: background 0.2s, transform 0.15s;
+      transition: background 0.2s, transform 0.3s;
     }
-    .theme-toggle:hover { background: var(--surface); transform: translateY(-1px); }
+    .theme-toggle:hover { background: var(--surface); transform: rotate(20deg) scale(1.1); }
 
     /* Hero */
-    .hero { padding: 88px 0 64px; }
+    .hero { padding: 88px 0 64px; display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: center; }
+    @media (max-width: 720px) { .hero { grid-template-columns: 1fr; gap: 28px; } .hero-photo { order: -1; } }
+    .hero-photo {
+      position: relative; width: 240px; height: 240px; flex-shrink: 0;
+      animation: floatPhoto 6s ease-in-out infinite;
+    }
+    @keyframes floatPhoto { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    .hero-photo img {
+      width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+      border: 4px solid var(--surface); box-shadow: 0 16px 40px rgba(79,108,255,0.3);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+    .hero-photo::before {
+      content: ""; position: absolute; inset: -10px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      z-index: -1; opacity: 0.4; filter: blur(14px);
+    }
     .hero .eyebrow {
       color: var(--accent); font-weight: 600; font-size: 0.9rem;
       letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 16px;
@@ -75,10 +107,15 @@
     .hero h1 {
       font-size: clamp(2.2rem, 6vw, 3.6rem);
       line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 18px;
-      background: linear-gradient(120deg, var(--text), var(--accent));
+      background: linear-gradient(120deg, var(--text), var(--accent), var(--accent-2));
+      background-size: 200% auto;
       -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+      animation: shimmer 6s linear infinite;
     }
-    .hero .role { color: var(--text); font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; }
+    @keyframes shimmer { to { background-position: 200% center; } }
+    .hero .role { color: var(--text); font-size: 1.3rem; font-weight: 600; margin-bottom: 16px; min-height: 1.6em; }
+    .hero .role .cursor { color: var(--accent); animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
     .hero p { color: var(--muted); font-size: 1.12rem; max-width: 640px; margin-bottom: 28px; }
     .contact-line { display: flex; flex-wrap: wrap; gap: 18px; color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
     .contact-line a:hover { color: var(--accent); }
@@ -94,7 +131,12 @@
     }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(79,108,255,0.35); }
     .btn-ghost { border: 1px solid var(--border); color: var(--text); }
-    .btn-ghost:hover { background: var(--surface-2); }
+    .btn-ghost:hover { background: var(--surface-2); transform: translateY(-2px); }
+
+    /* Stats */
+    .stats { display: flex; flex-wrap: wrap; gap: 36px; margin-top: 44px; }
+    .stat .num { font-size: 2rem; font-weight: 700; color: var(--accent); letter-spacing: -0.02em; }
+    .stat .label { color: var(--muted); font-size: 0.9rem; }
 
     /* Sections */
     section { padding: 48px 0; }
@@ -102,14 +144,14 @@
     .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
     .section-sub { color: var(--muted); margin-bottom: 32px; }
 
-    /* Timeline (education / experience) */
+    /* Timeline */
     .timeline { display: grid; gap: 18px; }
     .entry {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 22px 24px;
-      transition: border-color 0.2s, transform 0.2s;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
     }
-    .entry:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .entry:hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
     .entry-head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
     .entry-head h3 { font-size: 1.15rem; }
     .entry-head .where { color: var(--muted); font-size: 0.9rem; }
@@ -124,11 +166,35 @@
     .chip {
       background: var(--surface-2); border: 1px solid var(--border);
       padding: 6px 14px; border-radius: 999px; font-size: 0.85rem; color: var(--muted);
+      transition: transform 0.2s, color 0.2s, border-color 0.2s, background 0.2s;
     }
+    .chip:hover { transform: translateY(-3px); color: #fff; background: var(--accent); border-color: var(--accent); }
 
-    /* Additional info grid */
+    /* Projects */
+    .projects { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 22px; }
+    .project {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .project:hover { transform: translateY(-6px); border-color: var(--accent); box-shadow: 0 18px 36px rgba(0,0,0,0.1); }
+    .project .thumb {
+      position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+    .project .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; display: block; }
+    .project:hover .thumb img { transform: scale(1.08); }
+    .project .body { padding: 20px 22px; }
+    .project .body h3 { font-size: 1.15rem; margin-bottom: 8px; }
+    .project .body p { color: var(--muted); font-size: 0.94rem; margin-bottom: 14px; }
+    .project .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .project .tag { font-size: 0.76rem; color: var(--accent); background: rgba(79,108,255,0.12); padding: 3px 10px; border-radius: 6px; }
+    .project .link { color: var(--accent); font-size: 0.9rem; font-weight: 600; }
+
+    /* Additional info */
     .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; }
-    .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }
+    .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; transition: transform 0.25s, border-color 0.25s; }
+    .info-card:hover { transform: translateY(-4px); border-color: var(--accent); }
     .info-card h4 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 10px; }
     .info-card p, .info-card li { color: var(--muted); font-size: 0.95rem; }
     .info-card ul { list-style: none; display: grid; gap: 6px; }
@@ -138,13 +204,27 @@
     .contact h2 { font-size: 1.8rem; letter-spacing: -0.02em; margin-bottom: 12px; }
     .contact p { color: var(--muted); margin-bottom: 24px; }
     .socials { display: flex; gap: 20px; justify-content: center; margin-top: 24px; }
-    .socials a { color: var(--muted); transition: color 0.2s; }
-    .socials a:hover { color: var(--accent); }
+    .socials a { color: var(--muted); transition: color 0.2s, transform 0.2s; }
+    .socials a:hover { color: var(--accent); transform: translateY(-2px); }
 
     footer { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 36px 0; border-top: 1px solid var(--border); }
+
+    /* Scroll reveal animation */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: 0.08s; }
+    .reveal.d2 { transition-delay: 0.16s; }
+    .reveal.d3 { transition-delay: 0.24s; }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      .blob, .hero h1, .theme-toggle { animation: none !important; }
+    }
   </style>
 </head>
 <body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
   <header>
     <div class="wrap">
       <nav>
@@ -153,6 +233,7 @@
           <div class="nav-links">
             <a href="#education">Education</a>
             <a href="#experience">Experience</a>
+            <a href="#projects">Projects</a>
             <a href="#skills">Skills</a>
             <a href="#contact">Contact</a>
           </div>
@@ -165,36 +246,58 @@
   <main class="wrap">
     <!-- Hero -->
     <section class="hero">
-      <div class="eyebrow">Hello, I'm</div>
-      <h1>Ahmed Gamal</h1>
-      <div class="role">Your Professional Title</div>
-      <p>A short professional summary — describe who you are, your core strengths, and what you bring to a role. Keep it to one or two punchy sentences.</p>
-      <div class="contact-line">
-        <a href="mailto:info@ailigent.ai">✉ info@ailigent.ai</a>
-        <a href="tel:+200000000000">📞 +20 000 000 0000</a>
-        <span>📍 City, Country</span>
+      <div class="hero-text">
+      <div class="eyebrow reveal">Hello, I'm</div>
+      <h1 class="reveal d1">Ahmed Gamal</h1>
+      <div class="role reveal d1"><span id="typed"></span><span class="cursor">|</span></div>
+      <p class="reveal d2">Full-stack developer based in Cairo with 7+ years building fast, reliable web platforms. I turn complex requirements into clean, scalable products — from intuitive React front-ends to robust Node and Python back-ends.</p>
+      <div class="contact-line reveal d2">
+        <a href="mailto:ahmed.gamal@example.com">✉ ahmed.gamal@example.com</a>
+        <a href="tel:+201001234567">📞 +20 100 123 4567</a>
+        <span>📍 Cairo, Egypt</span>
       </div>
-      <div class="cta">
+      <div class="cta reveal d3">
         <a class="btn btn-primary" href="#experience">View experience →</a>
-        <a class="btn btn-ghost" href="cv-template.pdf" target="_blank">Download CV</a>
+        <a class="btn btn-ghost" href="ahmed gamal..pdf" target="_blank">Download CV</a>
+      </div>
+      <div class="stats reveal d3">
+        <div class="stat"><div class="num" data-count="7">0</div><div class="label">Years experience</div></div>
+        <div class="stat"><div class="num" data-count="40" data-suffix="+">0</div><div class="label">Projects shipped</div></div>
+        <div class="stat"><div class="num" data-count="15" data-suffix="+">0</div><div class="label">Happy clients</div></div>
+      </div>
+      </div>
+      <div class="hero-photo reveal d1">
+        <img src="https://i.pravatar.cc/300?img=12" alt="Ahmed Gamal"
+             onerror="this.style.visibility='hidden'" />
       </div>
     </section>
 
     <!-- Education -->
     <section id="education">
-      <h2 class="section-title">Education &amp; Qualifications</h2>
-      <p class="section-sub">Academic background and credentials.</p>
+      <h2 class="section-title reveal">Education &amp; Qualifications</h2>
+      <p class="section-sub reveal">Academic background and credentials.</p>
       <div class="timeline">
-        <article class="entry">
+        <article class="entry reveal">
           <div class="entry-head">
-            <h3>University Name</h3>
-            <span class="where">City, Country</span>
+            <h3>Cairo University</h3>
+            <span class="where">Cairo, Egypt</span>
           </div>
-          <div class="date">2000 – 2003</div>
-          <div class="title">Degree and Subject</div>
+          <div class="date">2013 – 2017</div>
+          <div class="title">B.Sc. in Computer Engineering</div>
           <ul>
-            <li>Relevant additional info — honours, GPA, or distinctions.</li>
-            <li>Notable coursework, thesis, or project highlights.</li>
+            <li>Graduated with Honours (GPA 3.7/4.0), ranked in the top 5% of the cohort.</li>
+            <li>Graduation project: a real-time ride-sharing platform — awarded best project of the year.</li>
+          </ul>
+        </article>
+        <article class="entry reveal d1">
+          <div class="entry-head">
+            <h3>Udacity</h3>
+            <span class="where">Online</span>
+          </div>
+          <div class="date">2018</div>
+          <div class="title">Full-Stack Web Developer Nanodegree</div>
+          <ul>
+            <li>Completed intensive program covering modern JavaScript, APIs, and cloud deployment.</li>
           </ul>
         </article>
       </div>
@@ -202,92 +305,144 @@
 
     <!-- Experience -->
     <section id="experience">
-      <h2 class="section-title">Work Experience</h2>
-      <p class="section-sub">Roles, responsibilities, and achievements.</p>
+      <h2 class="section-title reveal">Work Experience</h2>
+      <p class="section-sub reveal">Roles, responsibilities, and achievements.</p>
       <div class="timeline">
-        <article class="entry">
+        <article class="entry reveal">
           <div class="entry-head">
-            <h3>Official Company Name</h3>
+            <h3>Instabug</h3>
             <span class="where">Cairo, Egypt</span>
           </div>
-          <div class="date">Sep-07 – Aug-10</div>
-          <div class="title">Job Title</div>
+          <div class="date">Jan-21 – Present</div>
+          <div class="title">Senior Full-Stack Engineer</div>
           <ul>
-            <li>Describe your function and responsibilities using a strong action verb.</li>
-            <li>Concentrate on achievements with quantitative results where possible.</li>
-            <li>Highlight what you distinctly contributed to in the role.</li>
+            <li>Led a team of 5 engineers to rebuild the analytics dashboard, cutting load times by 60%.</li>
+            <li>Architected a microservices backend handling 2M+ daily events with 99.9% uptime.</li>
+            <li>Mentored 3 junior developers and introduced a code-review process that reduced bugs by 35%.</li>
           </ul>
         </article>
-        <article class="entry">
+        <article class="entry reveal d1">
           <div class="entry-head">
-            <h3>Official Company Name</h3>
-            <span class="where">City, Country</span>
+            <h3>Vezeeta</h3>
+            <span class="where">Cairo, Egypt</span>
           </div>
-          <div class="date">Jun-05 – Sep-07</div>
-          <div class="title">Job Title</div>
+          <div class="date">Jun-18 – Dec-20</div>
+          <div class="title">Full-Stack Developer</div>
           <ul>
-            <li>Bring the experience to life — what would a reader be most interested in?</li>
-            <li>Lead with impact, not a list of daily tasks.</li>
-            <li>Use measurable outcomes to back up your claims.</li>
+            <li>Built and shipped patient-booking features used by 500k+ monthly active users.</li>
+            <li>Migrated a legacy PHP system to a React + Node stack, improving performance 3×.</li>
+            <li>Integrated multiple payment gateways, increasing successful checkouts by 22%.</li>
           </ul>
         </article>
-        <article class="entry">
+        <article class="entry reveal d2">
           <div class="entry-head">
-            <h3>Official Company Name</h3>
-            <span class="where">City, Country</span>
+            <h3>Freelance</h3>
+            <span class="where">Remote</span>
           </div>
-          <div class="date">Mar-04 – Jun-05</div>
-          <div class="title">Job Title</div>
+          <div class="date">Sep-16 – May-18</div>
+          <div class="title">Web Developer</div>
           <ul>
-            <li>Start each bullet with a relevant action verb.</li>
-            <li>Keep it easy to scan; avoid industry jargon.</li>
+            <li>Delivered 20+ responsive websites and web apps for clients across the MENA region.</li>
+            <li>Maintained a 5-star rating on Upwork with 100% on-time delivery.</li>
           </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <h2 class="section-title reveal">Featured Projects</h2>
+      <p class="section-sub reveal">A selection of things I've built.</p>
+      <div class="projects">
+        <article class="project reveal">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/ahmed-shop/600/375" alt="E-commerce platform" loading="lazy"
+                 onerror="this.style.display='none'" />
+          </div>
+          <div class="body">
+            <div class="tags"><span class="tag">React</span><span class="tag">Node.js</span><span class="tag">Stripe</span></div>
+            <h3>NileMart — E-commerce Platform</h3>
+            <p>A full-featured online store with real-time inventory, multi-currency checkout, and an admin dashboard. Serves 30k+ monthly orders.</p>
+            <a class="link" href="#">View project →</a>
+          </div>
+        </article>
+        <article class="project reveal d1">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/ahmed-dash/600/375" alt="Analytics dashboard" loading="lazy"
+                 onerror="this.style.display='none'" />
+          </div>
+          <div class="body">
+            <div class="tags"><span class="tag">Next.js</span><span class="tag">GraphQL</span><span class="tag">D3.js</span></div>
+            <h3>PulseBoard — Analytics Dashboard</h3>
+            <p>A real-time analytics suite visualizing 2M+ daily events with customizable charts, alerts, and team reporting.</p>
+            <a class="link" href="#">View project →</a>
+          </div>
+        </article>
+        <article class="project reveal d2">
+          <div class="thumb">
+            <img src="https://picsum.photos/seed/ahmed-health/600/375" alt="Healthcare booking app" loading="lazy"
+                 onerror="this.style.display='none'" />
+          </div>
+          <div class="body">
+            <div class="tags"><span class="tag">React Native</span><span class="tag">Django</span><span class="tag">AWS</span></div>
+            <h3>MediBook — Appointment App</h3>
+            <p>A cross-platform app for booking doctor appointments, with reminders, e-prescriptions, and secure payments.</p>
+            <a class="link" href="#">View project →</a>
+          </div>
         </article>
       </div>
     </section>
 
     <!-- Skills -->
     <section id="skills">
-      <h2 class="section-title">Skills</h2>
-      <p class="section-sub">Tools and technologies I work with.</p>
-      <div class="skills">
-        <span class="chip">Skill One</span>
-        <span class="chip">Skill Two</span>
-        <span class="chip">Skill Three</span>
-        <span class="chip">Skill Four</span>
-        <span class="chip">Skill Five</span>
-        <span class="chip">Skill Six</span>
-        <span class="chip">Skill Seven</span>
-        <span class="chip">Skill Eight</span>
+      <h2 class="section-title reveal">Skills</h2>
+      <p class="section-sub reveal">Tools and technologies I work with.</p>
+      <div class="skills reveal d1">
+        <span class="chip">JavaScript</span>
+        <span class="chip">TypeScript</span>
+        <span class="chip">React</span>
+        <span class="chip">Next.js</span>
+        <span class="chip">Node.js</span>
+        <span class="chip">Python</span>
+        <span class="chip">Django</span>
+        <span class="chip">PostgreSQL</span>
+        <span class="chip">MongoDB</span>
+        <span class="chip">Redis</span>
+        <span class="chip">Docker</span>
+        <span class="chip">Kubernetes</span>
+        <span class="chip">AWS</span>
+        <span class="chip">GraphQL</span>
+        <span class="chip">CI/CD</span>
       </div>
     </section>
 
     <!-- Additional Information -->
     <section id="additional">
-      <h2 class="section-title">Additional Information</h2>
-      <p class="section-sub">A bit more about me.</p>
+      <h2 class="section-title reveal">Additional Information</h2>
+      <p class="section-sub reveal">A bit more about me.</p>
       <div class="info-grid">
-        <div class="info-card">
+        <div class="info-card reveal">
           <h4>Interests</h4>
-          <p>Activities you actively participate in and can talk about — highlight achievements rather than just listing hobbies.</p>
+          <p>Open-source contributor, competitive chess player, and an avid long-distance runner — completed the Cairo Half Marathon twice.</p>
         </div>
-        <div class="info-card">
+        <div class="info-card reveal d1">
           <h4>Achievements</h4>
           <ul>
-            <li>Academic honour or award</li>
-            <li>Scholarship or selective recognition</li>
-            <li>Notable personal accomplishment</li>
+            <li>1st place, Cairo ICT Hackathon 2019</li>
+            <li>AWS Certified Solutions Architect</li>
+            <li>500+ contributions on GitHub last year</li>
           </ul>
         </div>
-        <div class="info-card">
+        <div class="info-card reveal d2">
           <h4>Nationality</h4>
-          <p>Your nationality and any work authorization if applicable.</p>
+          <p>Egyptian — eligible to work remotely worldwide.</p>
         </div>
-        <div class="info-card">
+        <div class="info-card reveal d3">
           <h4>Languages</h4>
           <ul>
             <li>Arabic (native)</li>
             <li>English (fluent)</li>
+            <li>German (intermediate)</li>
           </ul>
         </div>
       </div>
@@ -295,10 +450,10 @@
 
     <!-- Contact -->
     <section id="contact">
-      <div class="contact">
+      <div class="contact reveal">
         <h2>Let's get in touch</h2>
         <p>Open to new opportunities and collaborations. Feel free to reach out.</p>
-        <a class="btn btn-primary" href="mailto:info@ailigent.ai">Say hello →</a>
+        <a class="btn btn-primary" href="mailto:ahmed.gamal@example.com">Say hello →</a>
         <div class="socials">
           <a href="#" aria-label="GitHub">GitHub</a>
           <a href="#" aria-label="LinkedIn">LinkedIn</a>
@@ -322,18 +477,67 @@
       const saved = localStorage.getItem('theme');
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const initial = saved || (prefersDark ? 'dark' : 'light');
-
       function apply(theme) {
         root.setAttribute('data-theme', theme);
         toggle.textContent = theme === 'dark' ? '☀️' : '🌙';
       }
       apply(initial);
-
       toggle.addEventListener('click', function () {
         const next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
         apply(next);
         localStorage.setItem('theme', next);
       });
+    })();
+
+    // Scroll reveal
+    (function () {
+      const els = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('visible'); }); return; }
+      const obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { entry.target.classList.add('visible'); obs.unobserve(entry.target); }
+        });
+      }, { threshold: 0.12 });
+      els.forEach(function (e) { obs.observe(e); });
+    })();
+
+    // Typing effect for role
+    (function () {
+      const target = document.getElementById('typed');
+      const roles = ['Full-Stack Developer', 'React Specialist', 'Cloud Enthusiast', 'Problem Solver'];
+      let r = 0, c = 0, deleting = false;
+      function tick() {
+        const word = roles[r];
+        target.textContent = word.substring(0, c);
+        if (!deleting && c < word.length) { c++; setTimeout(tick, 90); }
+        else if (!deleting && c === word.length) { deleting = true; setTimeout(tick, 1600); }
+        else if (deleting && c > 0) { c--; setTimeout(tick, 45); }
+        else { deleting = false; r = (r + 1) % roles.length; setTimeout(tick, 300); }
+      }
+      tick();
+    })();
+
+    // Animated counters
+    (function () {
+      const nums = document.querySelectorAll('.num[data-count]');
+      const run = function (el) {
+        const end = parseInt(el.getAttribute('data-count'), 10);
+        const suffix = el.getAttribute('data-suffix') || '';
+        let cur = 0;
+        const step = Math.max(1, Math.round(end / 40));
+        const t = setInterval(function () {
+          cur += step;
+          if (cur >= end) { cur = end; clearInterval(t); }
+          el.textContent = cur + suffix;
+        }, 30);
+      };
+      if (!('IntersectionObserver' in window)) { nums.forEach(run); return; }
+      const obs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) { run(entry.target); obs.unobserve(entry.target); }
+        });
+      }, { threshold: 0.5 });
+      nums.forEach(function (e) { obs.observe(e); });
     })();
   </script>
 </body>
